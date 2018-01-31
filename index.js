@@ -16,8 +16,7 @@ assert.identity = (value, field = 'Identity') => {
 };
 
 assert.float = (value, field = 'Float') => {
-    const floatValue = parseFloat(value);
-    const isValid = !isNaN(floatValue);
+    const isValid = /^-?\d+(?:\.\d+)?$/.test(value);
 
     assert(isValid, `${field} is invalid`, 400, 'FVI', { value });
 };
