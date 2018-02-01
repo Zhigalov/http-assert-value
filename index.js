@@ -5,10 +5,10 @@ const Ajv = require('ajv');
  * Assert value with http-specific error data
  *
  * @param {String} value
- * @param {String} message - text of the error
- * @param {Number} code - http-code of the error
- * @param {String} shortMessage - three-letters code of the error
- * @param {Object} [options] - additional information of the error
+ * @param {String} message - error text
+ * @param {Number} code - error http-code
+ * @param {String} shortMessage - error three-letters code
+ * @param {Object} [options] - error additional information
  */
 const assert = (value, message, code, shortMessage, options = {}) => {
     if (shortMessage) {

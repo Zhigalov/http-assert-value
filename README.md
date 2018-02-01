@@ -14,6 +14,9 @@ assert.float('3.14');                      // Ok
 assert.positiveInt('12');                  // Ok
 assert.text('The Green Mile');             // Ok
 assert.bySchema('1', { type: 'integer' }); // Ok
+
+// All methods have duplicates with `try...`
+assert.text(undefined);                    // Error
 assert.tryText(undefined);                 // Ok
 
 try {
