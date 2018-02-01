@@ -96,4 +96,16 @@ Object
         }
     });
 
-module.exports = Object.assign(assert, methods);
+Object
+    .keys(methods)
+    .forEach(key => assert[key] = (value, ...args) => {
+        const method = methods[key];
+
+        if (Array.isArray(value)) {
+            value.forEach(item => method(item, ...args));
+        } else {
+            method(value, ...args)
+        }
+    });
+
+module.exports = assert;

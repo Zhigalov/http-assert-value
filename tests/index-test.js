@@ -12,6 +12,7 @@ describe('assert', () => {
             sut.identity('with_underscore');
             sut.identity('UPPERCASE');
             sut.identity('with.dot');
+            sut.identity(['first', 'second', 'third']);
         });
 
         it('should throw error with custom field', async () => {
@@ -46,6 +47,17 @@ describe('assert', () => {
                 value: ''
             });
         });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(sut.identity, ['first', 'second', 'inv@lid']);
+
+            assert.strictEqual(error.message, 'Identity is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_III',
+                value: 'inv@lid'
+            });
+        });
     });
 
     describe('float', () => {
@@ -53,6 +65,7 @@ describe('assert', () => {
             sut.float('123');
             sut.float('12.3', 'Field name');
             sut.float('-1');
+            sut.float(['3.14', '2', '0']);
         });
 
         it('should throw error with custom field', async () => {
@@ -87,12 +100,24 @@ describe('assert', () => {
                 value: ''
             });
         });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(sut.float, ['3.14', '2', '<3']);
+
+            assert.strictEqual(error.message, 'Float is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_FVI',
+                value: '<3'
+            });
+        });
     });
 
     describe('positiveInt', () => {
         it('should do nothing when positiveInt is valid', () => {
             sut.positiveInt('123');
             sut.positiveInt('12', 'Field name');
+            sut.positiveInt(['1', '23', '456']);
         });
 
         it('should throw error with custom field', async () => {
@@ -127,6 +152,17 @@ describe('assert', () => {
                 value: ''
             });
         });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(sut.positiveInt, ['1', '23', '-8']);
+
+            assert.strictEqual(error.message, 'Positive integer is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_PII',
+                value: '-8'
+            });
+        });
     });
 
     describe('text', () => {
@@ -135,6 +171,7 @@ describe('assert', () => {
             sut.text('12', 'Field name');
             sut.text('with spaces');
             sut.text('with-dash');
+            sut.text(['first', 'second', 'third']);
         });
 
         it('should throw error with custom field', async () => {
@@ -173,6 +210,17 @@ describe('assert', () => {
                 value: ''
             });
         });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(sut.text, ['first', 'second', 'inv@lid']);
+
+            assert.strictEqual(error.message, 'Text is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_TVI',
+                value: 'inv@lid'
+            });
+        });
     });
 
     describe('bySchema', () => {
@@ -181,6 +229,10 @@ describe('assert', () => {
         it('should do nothing when data is valid', () => {
             sut.bySchema({ id: '1111', login: 'zhigalov', age: 27 }, schema);
             sut.bySchema({ id: '2222' }, schema);
+            sut.bySchema([
+                { id: '3333', login: 'YuuKohaku' },
+                { id: '4444', login: 'noveogroup-amorgunov' }
+            ], schema);
         });
 
         it('should throw error when check by schema failed', async () => {
@@ -201,15 +253,52 @@ describe('assert', () => {
                 ]
             });
         });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(
+                sut.bySchema,
+                [{}, { id: '5555' }],
+                schema
+            );
+
+            assert.strictEqual(error.message, 'Check by schema failed');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_CSF',
+                errors: [
+                    {
+                        dataPath: '',
+                        keyword: 'required',
+                        message: 'should have required property \'id\'',
+                        params: { missingProperty: 'id' },
+                        schemaPath: '#/required'
+                    }
+                ]
+            });
+        });
     });
 
     describe('tryIdentity', () => {
-        it('should do nothing when identity is valid', () => sut.tryIdentity('valid'));
+        it('should do nothing when identity is valid', () => {
+            sut.tryIdentity('valid');
+            sut.tryIdentity(['one', 'more', 'valid']);
+        });
 
         it('should do nothing when identity is undefined', () => sut.tryIdentity());
 
         it('should throw error when identity is invalid', async () => {
             const error = await catchError(sut.tryIdentity, 'inv@l!d');
+
+            assert.strictEqual(error.message, 'Identity is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_III',
+                value: 'inv@l!d'
+            });
+        });
+
+        it('should throw error for value from array', async () => {
+            const error = await catchError(sut.tryIdentity, ['one', 'two', 'inv@l!d']);
 
             assert.strictEqual(error.message, 'Identity is invalid');
             assert.strictEqual(error.statusCode, 400);
