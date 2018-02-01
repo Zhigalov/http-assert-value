@@ -128,4 +128,50 @@ describe('Assert', () => {
             });
         });
     });
+
+    describe('text', () => {
+        it('should do nothing when positiveInt is valid', () => {
+            sut.text('Correct');
+            sut.text('12', 'Field name');
+            sut.text('with spaces');
+            sut.text('with-dash');
+        });
+
+        it('should throw error with custom field', async () => {
+            const error = await catchError(
+                sut.text,
+                'drop database "yablogs";',
+                'Suggest text'
+            );
+
+            assert.strictEqual(error.message, 'Suggest text is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_TVI',
+                value: 'drop database "yablogs";'
+            });
+        });
+
+        it('should throw error with default field', async () => {
+            const error = await catchError(sut.text, 'inv@l!d');
+
+            assert.strictEqual(error.message, 'Text is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_TVI',
+                value: 'inv@l!d'
+            });
+        });
+
+        it('should throw error when value is empty', async () => {
+            const error = await catchError(sut.text, '');
+
+            assert.strictEqual(error.message, 'Text is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_TVI',
+                value: ''
+            });
+        });
+    });
 });

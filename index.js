@@ -28,9 +28,9 @@ assert.positiveInt = (value, field = 'Positive integer') => {
 };
 
 assert.text = (value, field = 'Text') => {
-    const isValid = /^[^*;!#$%:^&)(?></\\]+$/i.test(value);
+    const isValid = /^[\w\s-]+$/i.test(value);
 
-    assert(isValid, `${field} is invalid`, 400, 'TII', { value });
+    assert(isValid, `${field} is invalid`, 400, 'TVI', { value });
 };
 
 assert.bySchema = (value, schema, options = {}) => {
