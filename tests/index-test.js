@@ -88,4 +88,44 @@ describe('Assert', () => {
             });
         });
     });
+
+    describe('positiveInt', () => {
+        it('should do nothing when positiveInt is valid', () => {
+            sut.positiveInt('123');
+            sut.positiveInt('12', 'Field name');
+        });
+
+        it('should throw error with custom field', async () => {
+            const error = await catchError(sut.positiveInt, '0', 'Page size');
+
+            assert.strictEqual(error.message, 'Page size is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_PII',
+                value: '0'
+            });
+        });
+
+        it('should throw error with default field', async () => {
+            const error = await catchError(sut.positiveInt, '-1');
+
+            assert.strictEqual(error.message, 'Positive integer is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_PII',
+                value: '-1'
+            });
+        });
+
+        it('should throw error when value is empty', async () => {
+            const error = await catchError(sut.positiveInt, '');
+
+            assert.strictEqual(error.message, 'Positive integer is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_PII',
+                value: ''
+            });
+        });
+    });
 });
