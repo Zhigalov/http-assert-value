@@ -130,7 +130,7 @@ describe('Assert', () => {
     });
 
     describe('text', () => {
-        it('should do nothing when positiveInt is valid', () => {
+        it('should do nothing when text is valid', () => {
             sut.text('Correct');
             sut.text('12', 'Field name');
             sut.text('with spaces');
@@ -171,6 +171,34 @@ describe('Assert', () => {
             assert.deepStrictEqual(error.options, {
                 internalCode: '400_TVI',
                 value: ''
+            });
+        });
+    });
+
+    describe('bySchema', () => {
+        const schema = require('./user');
+
+        it('should do nothing when data is valid', () => {
+            sut.bySchema({ id: '1111', login: 'zhigalov', age: 27 }, schema);
+            sut.bySchema({ id: '2222' }, schema);
+        });
+
+        it('should throw error when check by schema failed', async () => {
+            const error = await catchError(sut.bySchema, {}, schema);
+
+            assert.strictEqual(error.message, 'Check by schema failed');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_CSF',
+                errors: [
+                    {
+                        dataPath: '',
+                        keyword: 'required',
+                        message: 'should have required property \'id\'',
+                        params: { missingProperty: 'id' },
+                        schemaPath: '#/required'
+                    }
+                ]
             });
         });
     });
