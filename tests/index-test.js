@@ -3,7 +3,7 @@ const assert = require('assert');
 
 const sut = require('..');
 
-describe('Assert', () => {
+describe('assert', () => {
     describe('identity', () => {
         it('should do nothing when identity is valid', () => {
             sut.identity('valid');
@@ -199,6 +199,23 @@ describe('Assert', () => {
                         schemaPath: '#/required'
                     }
                 ]
+            });
+        });
+    });
+
+    describe('tryIdentity', () => {
+        it('should do nothing when identity is valid', () => sut.tryIdentity('valid'));
+
+        it('should do nothing when identity is undefined', () => sut.tryIdentity());
+
+        it('should throw error when identity is invalid', async () => {
+            const error = await catchError(sut.tryIdentity, 'inv@l!d');
+
+            assert.strictEqual(error.message, 'Identity is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.deepStrictEqual(error.options, {
+                internalCode: '400_III',
+                value: 'inv@l!d'
             });
         });
     });
