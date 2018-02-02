@@ -13,6 +13,8 @@ assert.identity('green-mile');             // Ok
 assert.float('3.14');                      // Ok
 assert.positiveInt('12');                  // Ok
 assert.text('The Green Mile');             // Ok
+
+// @see: http://json-schema.org/
 assert.bySchema('1', { type: 'integer' }); // Ok
 
 // All methods have duplicates with `try...`
