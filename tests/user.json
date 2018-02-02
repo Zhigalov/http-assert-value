@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User",
+  "description": "User schema for tests",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Unique identity of the user",
+      "type": "string",
+      "maxLength": 12
+    },
+    "login": {
+      "description": "Internal user login",
+      "type": "string",
+      "maxLength": 24
+    },
+    "age": {
+      "type": "number",
+      "minValue": 0
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "additionalProperties": false
+}
