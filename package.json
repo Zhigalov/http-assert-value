@@ -1,6 +1,6 @@
 {
   "name": "http-assert-value",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "assert values with status codes",
   "main": "index.js",
   "scripts": {
