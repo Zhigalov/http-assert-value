@@ -38,7 +38,7 @@ const methods = {
      * @param {String} [field] - name of the parameter containing value
      */
     float: (value, field = 'Float') => {
-        const isValid = /^-?\d+(?:\.\d+)?$/.test(value);
+        const isValid = /^-?\d+(?:\.(?:\d+)?)?$/.test(value);
 
         assert(isValid, `${field} is invalid`, 400, 'FVI', { value });
     },

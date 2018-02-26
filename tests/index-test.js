@@ -64,6 +64,7 @@ describe('assert', () => {
         it('should do nothing when float is valid', () => {
             sut.float('123');
             sut.float('12.3', 'Field name');
+            sut.float('12.');
             sut.float('-1');
             sut.float(['3.14', '2', '0']);
         });
