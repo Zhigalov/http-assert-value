@@ -62,7 +62,7 @@ const methods = {
      * @param {String} [field] - name of the parameter containing value
      */
     text: (value, field = 'Text') => {
-        const isValid = /^[\w\s-]+$/i.test(value);
+        const isValid = /^[^*;!#$%:^&)(?></\\]+$/i.test(value);
 
         assert(isValid, `${field} is invalid`, 400, 'TVI', { value });
     },
