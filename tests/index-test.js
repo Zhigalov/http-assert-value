@@ -173,6 +173,7 @@ describe('assert', () => {
             sut.text('with spaces');
             sut.text('with-dash');
             sut.text(['first', 'second', 'third']);
+            sut.text('Текст не на английском');
         });
 
         it('should throw error with custom field', async () => {
@@ -213,13 +214,13 @@ describe('assert', () => {
         });
 
         it('should throw error for value from array', async () => {
-            const error = await catchError(sut.text, ['first', 'second', 'inv@lid']);
+            const error = await catchError(sut.text, ['first', 'second', 'inv@lid;']);
 
             assert.strictEqual(error.message, 'Text is invalid');
             assert.strictEqual(error.statusCode, 400);
             assert.deepStrictEqual(error.options, {
                 internalCode: '400_TVI',
-                value: 'inv@lid'
+                value: 'inv@lid;'
             });
         });
     });
