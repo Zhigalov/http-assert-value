@@ -78,36 +78,36 @@ Assert text, like search request
 Assert object by schema
 
 * value `Any|Array<Any>` - asserting value
-* schema `Object` - asserting value
+* schema `Object` - json-schema
 * \[options\] `Object` - ajv constructor options
 
-### assert.tryIdentity(value, field = 'Identity')
-Assert slug or unique identity value, when value is defined
+### assert.oneOf(value, expected = [], comparator)
+Assert value, that it is in array
 
-* value `String|Array<String>` - asserting value
+* value `Any` - asserting value
+* \[expected\] `Array` - array which contains expected values
+* \[comparator\] `Function` - function which compare values from array with asserting
+value. By default used comparator to compare primitive (`(lhs, rhs) => lhs === rhs`)
+
+### assert.id(value, field = 'Id')
+Alias for `assert.positiveInt`
+
+### assert.maxLength(value, maxLength = 0, field = 'Text')
+Assert that value length is less than passed maxLength
+
+* value `Any` - asserting value
+* \[maxLength\] `Number` - max allowed length of a string
 * \[field\] `String` - name of the parameter containing value
 
-### assert.tryFloat(value, field = 'Float')
-Assert float value, when value is defined
 
-* value `String|Array<String>` - asserting value
-* \[field\] `String` - name of the parameter containing value
+Every method has *try-version* method, which has same interface and assert value,
+when value is passed:
 
-### assert.tryPositiveInt(value, field = 'Positive integer')
-Assert positive integer value, when value is defined
-
-* value `String|Array<String>` - asserting value
-* \[field\] `String` - name of the parameter containing value
-
-### assert.tryText(value, field = 'Text')
-Assert text, like search request, when value is defined
-
-* value `String|Array<String>` - asserting value
-* \[field\] `String` - name of the parameter containing value
-
-### assert.tryBySchema(value, schema, options = {})
-Assert object by schema, when value is defined
-
-* value `Any|Array<Any>` - asserting value
-* schema `Object` - asserting value
-* \[options\] `Object` - ajv constructor options
+- assert.tryIdentity
+- assert.tryFloat
+- assert.tryPositiveInt
+- assert.tryText
+- assert.tryBySchema
+- assert.oneOf
+- assert.id
+- assert.maxLength

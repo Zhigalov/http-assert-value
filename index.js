@@ -58,10 +58,13 @@ const methods = {
     /**
      * Assert text, like search request
      *
+     * If value equals undefined, format value to string
+     * @see https://stackoverflow.com/a/1085199
+     *
      * @param {String} value
      * @param {String} [field] - name of the parameter containing value
      */
-    text: (value, field = 'Text') => {
+    text: (value = '', field = 'Text') => {
         const isValid = /^[^*;!#$%:^&)(?></\\]+$/i.test(value);
 
         assert(isValid, `${field} is invalid`, 400, 'TVI', { value });
@@ -79,6 +82,45 @@ const methods = {
         const isValid = ajv.validate(schema, value);
 
         assert(isValid, 'Check by schema failed', 400, 'CSF', { errors: ajv.errors });
+    },
+
+    /**
+     * Assert value, that it is in array
+     *
+     * @param {*} value
+     * @param {Array} expected
+     * @param {Function} comparator, which compare values
+     */
+    oneOf(value, expected = [], comparator = (lhs, rhs) => lhs === rhs) {
+        const isValid = expected.some(expValue => comparator(expValue, value));
+
+        assert(isValid, 'Value is not allowed', 400, 'VNA', { value, expected });
+    },
+
+    /**
+     * Assert that value is right id (positive number)
+     *
+     * @param {Number} value
+     * @param {String} [field] - name of the parameter containing value
+     */
+    id(value, field = 'Id') {
+        const isValid = /^\d+$/.test(value) && Number(value) > 0;
+
+        assert(isValid, `${field} is invalid`, 400, 'III', { value });
+    },
+
+    /**
+     * Assert that value length is less than passed maxLength
+     *
+     * @param {String} value
+     * @param {Number} [maxLength] - max length of a string
+     * @param {String} [field] - name of the parameter containing value
+     */
+    maxLength(value, maxLength = 0, field = 'Text') {
+        const isValid = value && value.length < maxLength;
+        const assertMessage = `${field} should be less than ${maxLength} characters`;
+
+        assert(isValid, assertMessage, 400, 'TML', { value, maxLength });
     }
 };
 
