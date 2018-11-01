@@ -223,6 +223,15 @@ describe('assert', () => {
                 value: 'inv@lid;'
             });
         });
+
+        it('should throw error when value is not passed', async () => {
+            const error = await catchError(sut.text);
+
+            assert.strictEqual(error.message, 'Text is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_TVI');
+            assert.strictEqual(error.options.value, '');
+        });
     });
 
     describe('bySchema', () => {
@@ -308,6 +317,138 @@ describe('assert', () => {
                 internalCode: '400_III',
                 value: 'inv@l!d'
             });
+        });
+    });
+
+    describe('oneOf', () => {
+        it('should do nothing when value is expected', () => {
+            sut.oneOf(1, [1, 2]);
+            sut.oneOf('abc', ['abc', true, 3]);
+            sut.oneOf(true, ['abc', true, 3]);
+
+            // should apply passed comparator
+            sut.oneOf({ a: 1 }, [2, { a: 1 }], (a, b) => a.toString() === b.toString());
+        });
+
+        it('should throw error when value is not expected', async () => {
+            const error = await catchError(sut.oneOf, 'abc', ['cde', 'ab']);
+
+            assert.strictEqual(error.message, 'Value is not allowed');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_VNA');
+            assert.strictEqual(error.options.value, 'abc');
+        });
+
+        it('should throw error when value not passed', async () => {
+            const error = await catchError(sut.oneOf);
+
+            assert.strictEqual(error.message, 'Value is not allowed');
+        });
+    });
+
+    describe('tryOneOf', () => {
+        it('should do nothing when value is expected', () => {
+            sut.tryOneOf(1, [1, 2]);
+            sut.tryOneOf('abc', ['abc', true, 3]);
+            sut.tryOneOf(true, ['abc', true, 3]);
+
+            // should apply passed comparator
+            sut.tryOneOf({ a: 1 }, [2, { a: 1 }], (a, b) => a.toString() === b.toString());
+        });
+
+        it('should throw error when value is not expected', async () => {
+            const error = await catchError(sut.tryOneOf, 'abc', ['cde', 'ab']);
+
+            assert.strictEqual(error.message, 'Value is not allowed');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_VNA');
+            assert.strictEqual(error.options.value, 'abc');
+        });
+
+        it('should do nothing when value not passed', () => {
+            sut.tryOneOf();
+        });
+    });
+
+    describe('id', () => {
+        it('should do nothing when value is correct id', () => {
+            sut.id(1);
+            sut.id(2);
+            sut.id(4815162342);
+        });
+
+        it('should throw error when value is not id', async () => {
+            const error = await catchError(sut.id, 'abc');
+
+            assert.strictEqual(error.message, 'Id is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_III');
+            assert.strictEqual(error.options.value, 'abc');
+        });
+
+        it('should throw error when value not passed', async () => {
+            const error = await catchError(sut.id);
+
+            assert.strictEqual(error.message, 'Id is invalid');
+        });
+    });
+
+    describe('tryId', () => {
+        it('should do nothing when value is correct id', () => {
+            sut.tryId(1);
+            sut.tryId(2);
+            sut.tryId(4815162342);
+        });
+
+        it('should throw error when value is not correct id', async () => {
+            const error = await catchError(sut.tryId, 'abc');
+
+            assert.strictEqual(error.message, 'Id is invalid');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_III');
+            assert.strictEqual(error.options.value, 'abc');
+        });
+
+        it('should do nothing when value not passed', () => {
+            sut.tryId();
+        });
+    });
+
+    describe('maxLength', () => {
+        it('should do nothing when value\'s length is less than max length', () => {
+            sut.maxLength('hello world', 13);
+            sut.maxLength('hey', 4);
+        });
+
+        it('should throw error when value\'s length is more than max length', async () => {
+            const error = await catchError(sut.maxLength, 'hello world', 5);
+
+            assert.strictEqual(error.message, 'Text should be less than 5 characters');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_TML');
+            assert.strictEqual(error.options.value, 'hello world');
+            assert.strictEqual(error.options.maxLength, 5);
+        });
+    });
+
+    describe('tryMaxLength', () => {
+        it('should do nothing when value\'s length is less than max length', () => {
+            sut.tryMaxLength('hello world', 13);
+            sut.tryMaxLength('hey', 4);
+        });
+
+        it('should throw error when value\'s length is more than max length', async () => {
+            const error = await catchError(sut.tryMaxLength, 'hello world', 5);
+
+            assert.strictEqual(error.message, 'Text should be less than 5 characters');
+            assert.strictEqual(error.statusCode, 400);
+            assert.strictEqual(error.options.internalCode, '400_TML');
+            assert.strictEqual(error.options.value, 'hello world');
+            assert.strictEqual(error.options.maxLength, 5);
+        });
+
+        it('should do nothing when value not passed', () => {
+            sut.tryMaxLength();
         });
     });
 });
